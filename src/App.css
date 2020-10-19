@@ -1,0 +1,12 @@
+.App {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #464646;
+    height: 100%;
+}
+
+.shortcut {
+    background: rgba(255, 255, 255, 0.57);
+}
