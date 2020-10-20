@@ -3,10 +3,71 @@
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-    background-color: #464646;
     height: 100%;
+    -youbkit-touch-callout: none; /* iOS Safari */
+    -youbkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
+    -moz-user-select: none;	   /* Firefox */
+    -ms-user-select: none;		/* IE 10+ and Edge */
+    user-select: none;			/* Non-prefixed version,
+								  currently supported by Chrome and Opera */
 }
 
 .shortcut {
     background: rgba(255, 255, 255, 0.57);
+}
+
+.closeIcon {
+    position: absolute;
+    right: 0;
+    padding: 3px;
+    font-size: 1rem
+}
+
+.home {
+    background: #FFF;
+}
+
+.section {
+    padding: 0;
+}
+
+.author {
+    color: white;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 2rem;
+}
+
+.movable {
+    left: 0;
+    margin: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+
+}
+
+.dragIcon {
+    transform: rotate(45deg);
+    position: absolute;
+    z-index: 99;
+    border-radius: 50%;
+    background: #000000;
+    padding: 10px;
+    color: white;
+    left: -15px;
+    top: -15px;
+}
+
+.tools {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: fit-content;
+    padding: 2rem;
 }
