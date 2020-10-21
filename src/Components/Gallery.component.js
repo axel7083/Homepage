@@ -1,11 +1,10 @@
 /*global chrome*/
 import React, {Component} from "react";
-import { Card , Row, Container ,Col ,Image, Modal, Button,CardColumns,Spinner} from 'react-bootstrap';
+import { Card , Container ,Col ,Image, Modal, Button,CardColumns,Spinner} from 'react-bootstrap';
 import {createClient} from "pexels";
 
 const queries = [
     {name:"Nature",items:["Landscape","Forest","Flowers","Sky","Mountain","Cave"]},
-    {name:"color",items:["Red","Green","Blue","Yellow","White","Black"]},
     {name:"Marine Life",items:["Underwater","Fish","Coral Reef","Ocean","Sea"]},
     {name:"Animals",items:["Birds","Dogs","Cats","Lion","Horse","Tiger"]},
 ]
@@ -32,13 +31,16 @@ export default class Gallery extends Component {
     }
 
     componentDidMount() {
+        console.log("Loading data from storage");
         if(chrome.storage !== undefined) {
             chrome.storage.local.get(TAG, function (items) {
+                //console.log("Data: " + JSON.stringify(items));
                 if(items[TAG] === undefined) {
                     this.fetchRecursive(0,0);
                     return;
                 }
-                this.setState({collections:items.Gallery.collections})
+                console.log("Setting state from storage");
+                this.setState({collections:items[TAG].collections,spinning:false,selected:items[TAG].selected})
             }.bind(this));
 
         }
@@ -48,38 +50,6 @@ export default class Gallery extends Component {
             this.setState({error:"Not available outside chrome extension mode.",spinning:false})
         }
     }
-
-
-    //Maybe do something recursive to keep track of when all request are finish
-    /*fetchCollections() {
-        const client = createClient('563492ad6f91700001000001c3951a9a512740f593c60a433aa03598');
-        let collections = [];
-
-        queries.forEach((elem,i) => {
-
-            collections.push({name:elem.name,items:[]});
-            elem.items.forEach((query,j) => {
-
-                client.photos.search({ query, per_page: 20 }).then((res) => {
-                    if(res === undefined)
-                    {
-                        this.setState({error:"Some data couldn't be loaded. (Maybe too much requests)"});
-                    }
-                    collections[i].items.push({photos:res.photos,query:query});
-                });
-
-                if(elem.length-1 === j && queries.length-1 === i )
-                {
-                    //""finish""
-                    this.setState({spinning:false});
-                }
-            })
-
-            this.setState({collections:collections});
-        })
-
-    }*/
-
 
     fetchRecursive(i = -1, j = -1)
     {
@@ -103,8 +73,10 @@ export default class Gallery extends Component {
         const val = queries[i].items[j];
         console.log("(" + i + ":" + j +")Searching for " + val);
 
-        this.state.collections.push({name:val,items:[]});
-        client.photos.search({ val, per_page: 20 }).then((res) => {
+        if(this.state.collections.length <= i)
+            this.state.collections.push({name:queries[i].name,items:[]});
+
+        client.photos.search({ query:val, per_page: 20 }).then((res) => {
             if(res.error !== undefined)
             {
                 throw new Error(res.error);
@@ -121,17 +93,15 @@ export default class Gallery extends Component {
         }).catch(e => {
             this.setState({error:"[Error] " + e,spinning:false,collections:[]});
         })
-
-
-
     }
 
     onCollectionSelected(i,j)
     {
-        console.log("Selected: " + this.state.collections[i].name + "->" + this.state.collections[i].items[j]);
-
-        chrome.storage.local.set({ TAG: {collections:this.state.collections,selected:this.state.collections[i].items[j]}}, function(){
+        console.log("Selected: " + this.state.collections[i].name + "->" + this.state.collections[i].items[j].query);
+        this.setState({selected:this.state.collections[i].items[j]});
+        chrome.storage.local.set({ [TAG]: {collections:this.state.collections,selected:this.state.collections[i].items[j]}}, function(){
             //  Data's been saved boys and girls, go on home
+            console.log("Saved!");
         });
     }
 
@@ -146,7 +116,7 @@ export default class Gallery extends Component {
                     return <div><h5>{item.name}</h5>
                         <CardColumns>
                             {item.items.map((elem,j) => {
-                                return <Card>
+                                return <Card border={(this.state.selected.query === elem.query)?"success":"dark"}>
                                     <a href="#" onClick={() => this.onCollectionSelected(i,j)}><Card.Img variant="top" src={elem.photos?elem.photos[0].src.landscape:""}/>
                                         <Card.Footer>
                                             <small className="text-muted">{elem.query}</small>

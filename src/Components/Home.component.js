@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, {Component} from "react";
-import { Card , Row, Container ,Col ,Image, Modal, Button,Form,Table} from 'react-bootstrap';
-import {getComponentByID} from './../Utils';
+import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} from 'react-bootstrap';
+import {getComponentByID,randomIntFromInterval,cachingImage} from './../Utils';
 import Gallery  from './Gallery.component'
 
 
@@ -22,6 +22,7 @@ export default class TodoSectionComponent extends Component {
         this.save = this.save.bind(this);
         this.onShowWallpaperModal = this.onShowWallpaperModal.bind(this);
         this.onHideWallpaperModal = this.onHideWallpaperModal.bind(this);
+        this.reloadWallpaper = this.reloadWallpaper.bind(this);
 
 
         document.addEventListener('mousemove', this.mouseMove);
@@ -35,6 +36,8 @@ export default class TodoSectionComponent extends Component {
             newTitle:"",
             newType:0,
             wallpaperModal:false,
+            backgroundImage:"",
+            spinning:true,
         };
 
 
@@ -43,6 +46,7 @@ export default class TodoSectionComponent extends Component {
             chrome.storage.local.get("home", function (items) {
                 console.log("home: " + JSON.stringify(items));
                 this.setState({widgets:items.home})
+                this.reloadWallpaper(false);
             }.bind(this));
         }
         else
@@ -139,7 +143,6 @@ export default class TodoSectionComponent extends Component {
         this.setState({show:false})
     }
 
-
     onShowWallpaperModal()
     {
         this.setState({wallpaperModal:true})
@@ -149,11 +152,45 @@ export default class TodoSectionComponent extends Component {
         this.setState({wallpaperModal:false})
     }
 
+    reloadWallpaper(needCaching)
+    {
+        console.log("Wallpaper reload request");
+        this.onHideWallpaperModal();
+        this.setState({spinning:true});
+
+        chrome.storage.local.get("Gallery", function (items) {
+            console.log("Data: " + JSON.stringify(items["Gallery"].selected));
+            if(items["Gallery"] === undefined) {
+                console.log("Empty");
+                return;
+            }
+            let selected = items["Gallery"].selected;
+
+            let urls = [];
+            for(let i = 0 ; i < selected.photos.length; i ++)
+            {
+                urls.push(selected.photos[i].src.original)
+            }
+
+
+            if(needCaching)
+                cachingImage(urls,(index) => {
+                    this.setState({backgroundImage:"url("+selected.photos[index].src.original+")",spinning:false})
+                })
+            else
+                this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length)].src.original+")",spinning:false})
+
+
+        }.bind(this));
+
+
+    }
+
     render() {
 
 
         return (
-            <Container className="home">
+            <Container className="home" style={{backgroundImage:this.state.backgroundImage}}>
                 {this.state.widgets.map((item,i) => {
                     return <div key={i}
                                 className="movable"
@@ -171,6 +208,10 @@ export default class TodoSectionComponent extends Component {
                         <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
                 </Container>
+
+                {this.state.spinning?<Spinner animation="border" role="status" style={{top: "50%", left: "50%"}}>
+                    <span className="sr-only">Loading...</span>
+                </Spinner>: <></>}
 
                 <Modal
                     show={this.state.show}
@@ -218,6 +259,12 @@ export default class TodoSectionComponent extends Component {
                         <Modal.Title>Pexels gallery</Modal.Title>
                     </Modal.Header>
                     <Gallery/>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => this.setState({wallpaperModal:false})}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={() => this.reloadWallpaper(true)}>Save</Button>
+                    </Modal.Footer>
                 </Modal>
             </Container>
         );

@@ -1,8 +1,4 @@
 .App {
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
     height: 100%;
     -youbkit-touch-callout: none; /* iOS Safari */
     -youbkit-user-select: none;   /* Chrome 6.0+, Safari 3.1+, Edge & Opera 15+ */
@@ -14,6 +10,8 @@
 
 .shortcut {
     background: rgba(255, 255, 255, 0.57);
+    height: 6rem;
+    width: 6rem;
 }
 
 .closeIcon {
@@ -24,7 +22,14 @@
 }
 
 .home {
-    background: #FFF;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .section {
@@ -81,4 +86,14 @@
     bottom: 0;
     width: fit-content;
     padding: 2rem;
+}
+
+.notification {
+    height: auto;
+    width: fit-content;
+    margin: 1rem;
+    left: 50%;
+    transform: translate(-50%, 00%);
+    position: absolute;
+    top: 0;
 }

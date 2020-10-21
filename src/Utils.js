@@ -44,3 +44,28 @@ export const getComponentByID = (id) => {
             return undefined;
     }
 }
+
+export const randomIntFromInterval = (min, max) => { // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+//Cahce all the images but return the first one.
+export const cachingImage = (urls,callback) =>
+{
+    let callbackUsed = false;
+    let images = new Array()
+    for (let i = 0; i < urls.length; i++) {
+        console.log("Caching " + i + "/" + urls.length);
+        images[i] = new Image();
+        images[i].onload = function () {
+            console.log("Cached " + i + "/" + urls.length);
+
+            if(!callbackUsed) {
+                callback(i);
+                callbackUsed = true;
+            }
+        }
+        images[i].src = urls[i]
+    }
+
+}

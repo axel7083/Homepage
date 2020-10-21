@@ -32,6 +32,7 @@ export default class ShortcutSection extends Component {
                 console.log(name + ": " + items[name]);
                 if(items[name]=== undefined)
                     return;
+                console.log(items[name]);
                 this.setState({shortcut:items[name]})
                 //  items = [ { "phasersTo": "awesome" } ]
             }.bind(this));
@@ -148,7 +149,7 @@ export default class ShortcutSection extends Component {
                                     <Card.Body>
                                         {item.src?<Image style={{width: "3rem",height: "3rem"}} src={item.src} fluid />:<></>}
                                         <br/>
-                                        <span>{this.state.customName?this.state.customName:extractHostname(item.url)}</span>
+                                        <span>{item.customName?item.customName:extractHostname(item.url)}</span>
                                     </Card.Body>
                                 </a>
                             </Card>
