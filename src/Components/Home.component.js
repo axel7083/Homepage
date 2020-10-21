@@ -156,32 +156,37 @@ export default class TodoSectionComponent extends Component {
     {
         console.log("Wallpaper reload request");
         this.onHideWallpaperModal();
-        this.setState({spinning:true});
+        this.setState({spinning:true},() => {
 
-        chrome.storage.local.get("Gallery", function (items) {
-            console.log("Data: " + JSON.stringify(items["Gallery"].selected));
-            if(items["Gallery"] === undefined) {
-                console.log("Empty");
-                return;
-            }
-            let selected = items["Gallery"].selected;
+            chrome.storage.local.get("Gallery", function (items) {
+                console.log("Data: " + JSON.stringify(items["Gallery"].selected));
+                if(items["Gallery"] === undefined) {
+                    console.log("Empty");
+                    return;
+                }
+                let selected = items["Gallery"].selected;
 
-            let urls = [];
-            for(let i = 0 ; i < selected.photos.length; i ++)
-            {
-                urls.push(selected.photos[i].src.original)
-            }
-
-
-            if(needCaching)
-                cachingImage(urls,(index) => {
-                    this.setState({backgroundImage:"url("+selected.photos[index].src.original+")",spinning:false})
-                })
-            else
-                this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length)].src.original+")",spinning:false})
+                let urls = [];
+                for(let i = 0 ; i < selected.photos.length; i ++)
+                {
+                    urls.push(selected.photos[i].src.original)
+                }
 
 
-        }.bind(this));
+                if(needCaching)
+                    cachingImage(urls,(index) => {
+                        this.setState({backgroundImage:"url("+selected.photos[index].src.original+")",spinning:false})
+                    })
+                else
+                    this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length)].src.original+")",spinning:false})
+
+
+            }.bind(this));
+
+        });
+
+
+
 
 
     }
@@ -209,7 +214,7 @@ export default class TodoSectionComponent extends Component {
                     </Row>
                 </Container>
 
-                {this.state.spinning?<Spinner animation="border" role="status" style={{top: "50%", left: "50%"}}>
+                {this.state.spinning?<Spinner animation="border" role="status" style={{top: "50%", left: "50%", position:"absolute"}}>
                     <span className="sr-only">Loading...</span>
                 </Spinner>: <></>}
 
