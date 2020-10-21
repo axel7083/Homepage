@@ -9,6 +9,8 @@ export default class ShortcutSection extends Component {
     constructor(props) {
         super(props);
 
+        console.log("Hi I am " + this.props.name);
+
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
@@ -25,7 +27,7 @@ export default class ShortcutSection extends Component {
 
         if(chrome.storage !== undefined && this.props.name !== undefined) {
             let name = this.props.name;
-            console.log("Chrome detected getting " + name);
+            //console.log("Chrome detected getting " + name);
             chrome.storage.local.get(name, function (items) {
                 console.log(name + ": " + items[name]);
                 if(items[name]=== undefined)
@@ -53,8 +55,8 @@ export default class ShortcutSection extends Component {
     }
 
     handleAdd() {
-        console.log(this.state.url);
-        console.log(this.state.icon);
+        //console.log(this.state.url);
+        //console.log(this.state.icon);
 
         if(this.state.icon.length === 0)
         {
@@ -85,7 +87,7 @@ export default class ShortcutSection extends Component {
                             //  Data's been saved boys and girls, go on home
                         });
                     });
-                    console.log(data)
+                    //console.log(data)
                 })
                 .catch((err) => {
                     // Do something for an error here
@@ -100,7 +102,7 @@ export default class ShortcutSection extends Component {
             });
             this.setState({show: false, shortcut: this.state.shortcut},() => {
                 //Saving into the chrome storage
-                chrome.storage.local.set({ [this.props.customName]: this.state.shortcut}, function(){
+                chrome.storage.local.set({ [this.props.name]: this.state.shortcut}, function(){
                     //  Data's been saved boys and girls, go on home
                 });
             });
@@ -110,10 +112,13 @@ export default class ShortcutSection extends Component {
     handleRemove(index)
     {
         this.state.shortcut.splice(index,1);
-        this.setState({shortcut: this.state.shortcut});
-        console.log("Removing " + index);
+        this.setState({shortcut: this.state.shortcut}, () => {
+            chrome.storage.local.set({ [this.props.name]: this.state.shortcut}, function(){
+                //  Data's been saved boys and girls, go on home
+            });
+        });
+        //console.log("Removing " + index);
     }
-
 
     render() {
 
@@ -192,7 +197,6 @@ export default class ShortcutSection extends Component {
                         <Button variant="primary" onClick={this.handleAdd}>Add</Button>
                     </Modal.Footer>
                 </Modal>
-
             </Container>
         );
     }

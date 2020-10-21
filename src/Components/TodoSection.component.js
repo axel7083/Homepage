@@ -1,6 +1,8 @@
+/*global chrome*/
 import React, {Component} from "react";
 import { Card , Row, Container ,Col ,Image, Modal, Button,Form,Table} from 'react-bootstrap';
 
+const TAG = "TodoList";
 
 export default class TodoSectionComponent extends Component {
 
@@ -16,18 +18,36 @@ export default class TodoSectionComponent extends Component {
         }
     }
 
+    componentDidMount() {
+        chrome.storage.local.get(TAG, function (items) {
+            console.log(TAG + ": " + items[TAG]);
+            if(items[TAG]=== undefined)
+                return;
+            this.setState({todoList:items[TAG]})
+        }.bind(this));
+    }
+
     onAdd()
     {
         if(this.state.text.length === 0 )
             return;
         this.state.todoList.push(this.state.text);
-        this.setState({todoList:this.state.todoList,text:""});
+        this.setState({todoList:this.state.todoList,text:""}, () => {
+            chrome.storage.local.set({ [TAG]: this.state.todoList}, function(){
+                //  Data's been saved boys and girls, go on home
+            });
+        });
+
     }
 
     onRemove(index)
     {
         this.state.todoList.splice(index,1);
-        this.setState({todoList:this.state.todoList});
+        this.setState({todoList:this.state.todoList}, () => {
+        chrome.storage.local.set({ [TAG]: this.state.todoList}, function(){
+            //  Data's been saved boys and girls, go on home
+        });
+    });
     }
     render() {
         return (

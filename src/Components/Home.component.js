@@ -2,6 +2,7 @@
 import React, {Component} from "react";
 import { Card , Row, Container ,Col ,Image, Modal, Button,Form,Table} from 'react-bootstrap';
 import {getComponentByID} from './../Utils';
+import Gallery  from './Gallery.component'
 
 
 
@@ -14,6 +15,13 @@ export default class TodoSectionComponent extends Component {
         this.selected = this.selected.bind(this);
         this.mouseup = this.mouseup.bind(this);
         this.onEdit = this.onEdit.bind(this);
+        this.onAdd = this.onAdd.bind(this);
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+        this.save = this.save.bind(this);
+        this.onShowWallpaperModal = this.onShowWallpaperModal.bind(this);
+        this.onHideWallpaperModal = this.onHideWallpaperModal.bind(this);
 
 
         document.addEventListener('mousemove', this.mouseMove);
@@ -23,7 +31,10 @@ export default class TodoSectionComponent extends Component {
             editMode: false,
             mouseDown: false,
             selected: -1,
-            widgets: []
+            widgets: [],
+            newTitle:"",
+            newType:0,
+            wallpaperModal:false,
         };
 
 
@@ -78,16 +89,64 @@ export default class TodoSectionComponent extends Component {
         this.setState({mouseDown:true});
     }
 
+    onDelete(index)
+    {
+        console.log("Deleting ("+index+") " + this.state.widgets[index].props.name);
+
+        this.state.widgets.splice(index,1);
+        //TODO: Found a fix, when removing, the delete one move strangely and only the last index disappear.
+        this.save(() => {document.location.reload();});
+
+        //this.setState({ state: this.state });
+        //this.setState({widgets:this.state.widgets});
+        //this.forceUpdate();
+    }
+
     onEdit() {
         this.setState({editMode: !this.state.editMode})
         this.forceUpdate();
 
+        this.save(() => {});
+    }
+
+    save(callback)
+    {
         if(this.state.editMode)
             chrome.storage.local.set({ "home": this.state.widgets}, function(){
                 //  Data's been saved boys and girls, go on home
                 console.log(this.state.widgets);
                 console.log("Saved.");
+                callback();
             }.bind(this));
+    }
+
+    onAdd()
+    {
+        if(this.state.newTitle.length===0)
+            return;
+        console.log("Creating new component: " + this.state.newTitle + " " + this.state.newType);
+        this.state.widgets.push({props: {name: this.state.newTitle, allowManualAdding: true},componentID:parseInt(this.state.newType),top:"0%",left:"0%"});
+
+        //this.forceUpdate();
+        this.setState({widgets:this.state.widgets,show:false});
+    }
+
+    handleShow() {
+        this.setState({show:true})
+    }
+
+    handleClose() {
+        this.setState({show:false})
+    }
+
+
+    onShowWallpaperModal()
+    {
+        this.setState({wallpaperModal:true})
+    }
+
+    onHideWallpaperModal(){
+        this.setState({wallpaperModal:false})
     }
 
     render() {
@@ -99,7 +158,7 @@ export default class TodoSectionComponent extends Component {
                     return <div key={i}
                                 className="movable"
                                 style={{top:item.top,left:item.left}}>
-                        {this.state.editMode?<i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/>:<></>}
+                        {this.state.editMode?<div><i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/><i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/></div>:<></>}
                         {React.createElement(getComponentByID(item.componentID),item.props)}
                     </div>
                 })}
@@ -108,9 +167,58 @@ export default class TodoSectionComponent extends Component {
                     <Row>
                         <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
                         <Col md="auto"><i className="fa fa-cog fa-2x"></i></Col>
+                        <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
+                        <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
                 </Container>
 
+                <Modal
+                    show={this.state.show}
+                    onHide={this.handleClose}
+                    backdrop="static"
+                    keyboard={false}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add a widget</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label>Widget Title</Form.Label>
+                                <Form.Control type="text" placeholder="title"
+                                              value={this.state.newTitle}
+                                              onChange={e => this.setState({ newTitle: e.target.value })}/>
+                            </Form.Group>
+                            <Form.Group controlId="exampleForm.ControlSelect1">
+                                <Form.Label>Widgets</Form.Label>
+                                <Form.Control as="select"
+                                              value={this.state.newType}
+                                              onChange={e => this.setState({ newType: e.target.value })}>
+                                    <option value={0}>Shortcut widget</option>
+                                    <option value={1}>Todo List</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleClose}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={this.onAdd}>Add</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal
+                    show={this.state.wallpaperModal}
+                    onHide={this.onHideWallpaperModal}
+                    backdrop="static"
+                    size="lg"
+                    keyboard={false}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Pexels gallery</Modal.Title>
+                    </Modal.Header>
+                    <Gallery/>
+                </Modal>
             </Container>
         );
     }

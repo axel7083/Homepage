@@ -64,6 +64,17 @@
     top: -15px;
 }
 
+.trashIcon {
+    position: absolute;
+    z-index: 99;
+    border-radius: 50%;
+    background: #000000;
+    padding: 10px;
+    color: white;
+    left: -15px;
+    bottom: -15px;
+}
+
 .tools {
     position: absolute;
     right: 0;
