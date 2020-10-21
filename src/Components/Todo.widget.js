@@ -1,10 +1,10 @@
 /*global chrome*/
-import React, {Component} from "react";
-import { Card , Row, Container ,Col ,Image, Modal, Button,Form,Table} from 'react-bootstrap';
+import React from "react";
+import { Card , Container ,Col , Button,Form,Table} from 'react-bootstrap';
+import Widget from "../Widget";
 
-const TAG = "TodoList";
 
-export default class TodoSectionComponent extends Component {
+export default class TodoWidget extends Widget {
 
     constructor(props) {
         super(props);
@@ -12,19 +12,15 @@ export default class TodoSectionComponent extends Component {
         this.onAdd = this.onAdd.bind(this);
         this.onRemove = this.onRemove.bind(this);
 
-        this.state = {
-            text:"",
-            todoList:["Finish this project","Found motivation","Found my soul back"]
-        }
-    }
+        this.state = {};
 
-    componentDidMount() {
-        chrome.storage.local.get(TAG, function (items) {
-            console.log(TAG + ": " + items[TAG]);
-            if(items[TAG]=== undefined)
-                return;
-            this.setState({todoList:items[TAG]})
-        }.bind(this));
+        this.loadState((isEmpty) => {
+            if(isEmpty)
+            {
+                //Init with default data
+                this.setState({todoList:["Stop hating my life"]});
+            }
+        });
     }
 
     onAdd()
@@ -33,8 +29,8 @@ export default class TodoSectionComponent extends Component {
             return;
         this.state.todoList.push(this.state.text);
         this.setState({todoList:this.state.todoList,text:""}, () => {
-            chrome.storage.local.set({ [TAG]: this.state.todoList}, function(){
-                //  Data's been saved boys and girls, go on home
+            this.saveState(() => {
+                console.log("State saved.");
             });
         });
 
@@ -44,10 +40,10 @@ export default class TodoSectionComponent extends Component {
     {
         this.state.todoList.splice(index,1);
         this.setState({todoList:this.state.todoList}, () => {
-        chrome.storage.local.set({ [TAG]: this.state.todoList}, function(){
-            //  Data's been saved boys and girls, go on home
+            this.saveState(() => {
+                console.log("State saved.");
+            });
         });
-    });
     }
     render() {
         return (
@@ -63,13 +59,13 @@ export default class TodoSectionComponent extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {this.state.todoList.map((item,i) => {
+                        {this.state.todoList?this.state.todoList.map((item,i) => {
                             return <tr key={i}>
                                 <td>{i+1}</td>
                                 <td>{item}</td>
                                 <td style={{textAlign:"center"}}><a href="#" style={{color:"red"}} onClick={() => this.onRemove(i)}><i className="fa fa-trash"></i></a></td>
                             </tr>
-                        })}
+                        }):<></>}
                         </tbody>
                     </Table>
                     <Form style={{padding: "0rem 1rem 0rem 1rem"}}>

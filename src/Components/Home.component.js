@@ -3,10 +3,11 @@ import React, {Component} from "react";
 import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} from 'react-bootstrap';
 import {getComponentByID,randomIntFromInterval,cachingImage} from './../Utils';
 import Gallery  from './Gallery.component'
+import { v4 as uuidv4 } from 'uuid';
 
 
 
-export default class TodoSectionComponent extends Component {
+export default class Home extends Component {
 
     constructor(props) {
         super(props);
@@ -33,17 +34,18 @@ export default class TodoSectionComponent extends Component {
             mouseDown: false,
             selected: -1,
             widgets: [],
-            newTitle:"",
             newType:0,
             wallpaperModal:false,
             backgroundImage:"",
-            spinning:true,
+            spinning:false,
         };
 
 
         if(chrome.storage !== undefined) {
 
             chrome.storage.local.get("home", function (items) {
+                if(!items["home"])
+                    return;
                 console.log("home: " + JSON.stringify(items));
                 this.setState({widgets:items.home})
                 this.reloadWallpaper(false);
@@ -95,8 +97,6 @@ export default class TodoSectionComponent extends Component {
 
     onDelete(index)
     {
-        console.log("Deleting ("+index+") " + this.state.widgets[index].props.name);
-
         this.state.widgets.splice(index,1);
         //TODO: Found a fix, when removing, the delete one move strangely and only the last index disappear.
         this.save(() => {document.location.reload();});
@@ -107,6 +107,9 @@ export default class TodoSectionComponent extends Component {
     }
 
     onEdit() {
+        console.log("OnEdit:");
+        console.log(this.state.widgets);
+
         this.setState({editMode: !this.state.editMode})
         this.forceUpdate();
 
@@ -126,10 +129,8 @@ export default class TodoSectionComponent extends Component {
 
     onAdd()
     {
-        if(this.state.newTitle.length===0)
-            return;
-        console.log("Creating new component: " + this.state.newTitle + " " + this.state.newType);
-        this.state.widgets.push({props: {name: this.state.newTitle, allowManualAdding: true},componentID:parseInt(this.state.newType),top:"0%",left:"0%"});
+        console.log("Creating new component: " + this.state.newType);
+        this.state.widgets.push({UUID:uuidv4(),componentID:parseInt(this.state.newType),top:"0%",left:"0%"});
 
         //this.forceUpdate();
         this.setState({widgets:this.state.widgets,show:false});
@@ -158,8 +159,15 @@ export default class TodoSectionComponent extends Component {
         this.onHideWallpaperModal();
         this.setState({spinning:true},() => {
 
+            console.log("Get gallery from storage");
             chrome.storage.local.get("Gallery", function (items) {
-                console.log("Data: " + JSON.stringify(items["Gallery"].selected));
+
+                if(!items["Gallery"]) {
+                    this.setState({spinning: false});
+                    return;
+                }
+
+                //console.log("Data: " + JSON.stringify(items["Gallery"].selected));
                 if(items["Gallery"] === undefined) {
                     console.log("Empty");
                     return;
@@ -178,16 +186,12 @@ export default class TodoSectionComponent extends Component {
                         this.setState({backgroundImage:"url("+selected.photos[index].src.original+")",spinning:false})
                     })
                 else
-                    this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length)].src.original+")",spinning:false})
+                    this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length-1)].src.original+")",spinning:false})
 
 
             }.bind(this));
 
         });
-
-
-
-
 
     }
 
@@ -196,19 +200,19 @@ export default class TodoSectionComponent extends Component {
 
         return (
             <Container className="home" style={{backgroundImage:this.state.backgroundImage}}>
-                {this.state.widgets.map((item,i) => {
+                {this.state.widgets?.map((item,i) => {
                     return <div key={i}
                                 className="movable"
                                 style={{top:item.top,left:item.left}}>
                         {this.state.editMode?<div><i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/><i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/></div>:<></>}
-                        {React.createElement(getComponentByID(item.componentID),item.props)}
+                        { React.createElement(getComponentByID(item.componentID), {UUID:item.UUID, editor:this.state.editMode})}
                     </div>
                 })}
 
                 <Container className="tools">
                     <Row>
                         <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
-                        <Col md="auto"><i className="fa fa-cog fa-2x"></i></Col>
+                        {/*<Col md="auto"><i className="fa fa-cog fa-2x"></i></Col>*/}
                         <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
                         <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
@@ -228,12 +232,6 @@ export default class TodoSectionComponent extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label>Widget Title</Form.Label>
-                                <Form.Control type="text" placeholder="title"
-                                              value={this.state.newTitle}
-                                              onChange={e => this.setState({ newTitle: e.target.value })}/>
-                            </Form.Group>
                             <Form.Group controlId="exampleForm.ControlSelect1">
                                 <Form.Label>Widgets</Form.Label>
                                 <Form.Control as="select"
@@ -241,6 +239,7 @@ export default class TodoSectionComponent extends Component {
                                               onChange={e => this.setState({ newType: e.target.value })}>
                                     <option value={0}>Shortcut widget</option>
                                     <option value={1}>Todo List</option>
+                                    <option value={2}>Text widget</option>
                                 </Form.Control>
                             </Form.Group>
                         </Form>

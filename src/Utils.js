@@ -1,5 +1,6 @@
-import ShortcutSection  from './Components/ShortcutSection.component'
-import TodoSection  from './Components/TodoSection.component'
+import ShortcutWidget  from './Components/Shortcut.widget'
+import TodoSection  from './Components/Todo.widget'
+import TextWidget  from './Components/Text.widget'
 
 export const toDataUrl = (url, callback) => {
     var xhr = new XMLHttpRequest();
@@ -37,9 +38,11 @@ export const extractHostname = (url) => {
 export const getComponentByID = (id) => {
     switch (id) {
         case 0:
-            return ShortcutSection;
+            return ShortcutWidget;
         case 1:
             return TodoSection;
+        case 2:
+            return TextWidget;
         default:
             return undefined;
     }

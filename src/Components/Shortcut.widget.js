@@ -1,51 +1,35 @@
 /*global chrome*/
-import React, {Component} from "react";
+import React from "react";
+import Widget from "../Widget";
+
 import { Card , Row, Container ,Col ,Image, Modal, Button,Form} from 'react-bootstrap';
 import {extractHostname} from './../Utils';
 const favURL = "https://besticon-demo.herokuapp.com/allicons.json?url="
 
-export default class ShortcutSection extends Component {
+export default class ShortcutWidget extends Widget {
 
     constructor(props) {
         super(props);
-
-        console.log("Hi I am " + this.props.name);
 
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
 
-        this.state = {
-            name: this.props.name,
-            allowManualAdding: this.props.allowManualAdding,
-            shortcut: [],
-            url:"",
-            icon:"",
-            customName:"",
-        };
+        this.state = {};
 
-        if(chrome.storage !== undefined && this.props.name !== undefined) {
-            let name = this.props.name;
-            //console.log("Chrome detected getting " + name);
-            chrome.storage.local.get(name, function (items) {
-                console.log(name + ": " + items[name]);
-                if(items[name]=== undefined)
-                    return;
-                console.log(items[name]);
-                this.setState({shortcut:items[name]})
-                //  items = [ { "phasersTo": "awesome" } ]
-            }.bind(this));
+        this.loadState((isEmpty) => {
+            if(isEmpty)
+            {
+                //Init with default data
+                this.setState({allowManualAdding:true,shortcut:[], icon:""});
+            }
 
-        }
-        else
-        {
-            console.log("Debugging");
-        }
-
+            /*this.setState({OnEditorChangeListener:(value) => {
+                console.log("OnEditorChange: " + value);
+            }});*/
+        });
     }
-
-
 
     handleShow() {
         this.setState({show:true})
@@ -76,16 +60,16 @@ export default class ShortcutSection extends Component {
                     else
                     {
                         this.state.shortcut.push({
-                                src: data.icons[0].url,
-                                url: this.state.url,
-                                customName: this.state.customName,
-                            });
+                            src: data.icons[0].url,
+                            url: this.state.url,
+                            customName: this.state.customName,
+                        });
                     }
 
                     this.setState({show: false, shortcut: this.state.shortcut},() => {
-                        //Saving into the chrome storage
-                        chrome.storage.local.set({ [this.props.name]: this.state.shortcut}, function(){
-                            //  Data's been saved boys and girls, go on home
+
+                        this.saveState(() => {
+                            console.log("State saved.");
                         });
                     });
                     //console.log(data)
@@ -102,10 +86,11 @@ export default class ShortcutSection extends Component {
                 customName: this.state.customName,
             });
             this.setState({show: false, shortcut: this.state.shortcut},() => {
-                //Saving into the chrome storage
-                chrome.storage.local.set({ [this.props.name]: this.state.shortcut}, function(){
-                    //  Data's been saved boys and girls, go on home
+
+                this.saveState(() => {
+                    console.log("State saved.");
                 });
+
             });
         }
     }
@@ -114,9 +99,11 @@ export default class ShortcutSection extends Component {
     {
         this.state.shortcut.splice(index,1);
         this.setState({shortcut: this.state.shortcut}, () => {
-            chrome.storage.local.set({ [this.props.name]: this.state.shortcut}, function(){
-                //  Data's been saved boys and girls, go on home
+
+            this.saveState(() => {
+                console.log("State saved.");
             });
+
         });
         //console.log("Removing " + index);
     }
@@ -124,7 +111,7 @@ export default class ShortcutSection extends Component {
     render() {
 
         let add;
-
+        console.log("ReRender: " + JSON.stringify(this.state) );
         if(this.state.allowManualAdding)
         {
             add = <Col md="auto" >
@@ -141,7 +128,7 @@ export default class ShortcutSection extends Component {
             <Container className="section">
                 <h3 style={{color:"black"}}>{this.state.name}</h3>
                 <Row style={{textAlign: "center", fontSize:"x-small"}}>
-                    {this.state.shortcut.map((item,i) => {
+                    {this.state.shortcut?this.state.shortcut.map((item,i) => {
                         return <Col md="auto" key={i} >
                             <Card className="shortcut">
                                 <a href="#" onClick={() => this.handleRemove(i)}><i className="fa fa-close fa-sm closeIcon"></i></a>
@@ -154,7 +141,7 @@ export default class ShortcutSection extends Component {
                                 </a>
                             </Card>
                         </Col>
-                    })}
+                    }):<></>}
                     {add}
                 </Row>
 

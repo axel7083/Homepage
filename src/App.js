@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home  from './Components/Home.component'
+import ShortcutWidget  from './Components/Shortcut.widget'
 import {Alert} from 'react-bootstrap';
 import './App.css';
 
@@ -41,7 +42,7 @@ class App extends Component {
   render() {
     return (
       <div className="App" onSelect={() => {return false}}>
-        <Home/>
+         <Home/>
         {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="#">here</Alert.Link></Alert>:<></>}
 
       </div>

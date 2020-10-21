@@ -97,6 +97,15 @@ export default class Gallery extends Component {
 
     onCollectionSelected(i,j)
     {
+        if(!this.state.collections[i])
+            return;
+
+        if(!this.state.collections[i].items[j])
+            return;
+
+        console.log("Security check finish");
+
+
         console.log("Selected: " + this.state.collections[i].name + "->" + this.state.collections[i].items[j].query);
         this.setState({selected:this.state.collections[i].items[j]});
         chrome.storage.local.set({ [TAG]: {collections:this.state.collections,selected:this.state.collections[i].items[j]}}, function(){
@@ -116,10 +125,10 @@ export default class Gallery extends Component {
                     return <div><h5>{item.name}</h5>
                         <CardColumns>
                             {item.items.map((elem,j) => {
-                                return <Card border={(this.state.selected.query === elem.query)?"success":"dark"}>
+                                return <Card border={(this.state.selected?.query === elem?.query)?"success":"dark"}>
                                     <a href="#" onClick={() => this.onCollectionSelected(i,j)}><Card.Img variant="top" src={elem.photos?elem.photos[0].src.landscape:""}/>
                                         <Card.Footer>
-                                            <small className="text-muted">{elem.query}</small>
+                                            <small className="text-muted">{elem?.query}</small>
                                         </Card.Footer></a>
                                 </Card>
                             })}

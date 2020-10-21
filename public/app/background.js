@@ -1,8 +1,28 @@
-// Called when the user clicks on the browser action
+/*global chrome*/
 chrome.browserAction.onClicked.addListener(function(tab) {
-   // Send a message to the active tab
-   chrome.tabs.query({active: true, currentWindow:true},function(tabs) {
-        var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-   });
+    open();
 });
+
+chrome.commands.onCommand.addListener(function (command) {
+    if (command === "open") {
+        open();
+    }
+});
+
+
+function open()
+{
+    chrome.tabs.query({}, function (tabs) {
+        let found = false;
+        for (var i = 0; i < tabs.length; i++) {
+            if(tabs[i].url.includes("chrome-extension://") && tabs[i].url.includes("index.html"))
+            {
+                found = true;
+                chrome.tabs.update(tabs[i].id, {selected: true});
+                break;
+            }
+        }
+        if(!found)
+            chrome.tabs.create({url:'index.html'});
+    });
+}
