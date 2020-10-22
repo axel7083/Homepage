@@ -14,6 +14,12 @@ This page is using `Widgets`, you can move them as you want, where you want.
  
 You can directly go/open this page using Ctrl+Q anywhere in your browser. No need to lose time searching where is the right tab.
   
+## Wallpaper
+
+I like to have beautiful and nice wallpaper, therefore I decided to use the [Pexels](https://www.pexels.com/) website, and they API to display nice background by themes.
+
+The user can choose between themes available, and differents images will be displayed related to the selected theme.
+
 ## Todo
  
 Some future widgets I will implement:
