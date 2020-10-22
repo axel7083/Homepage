@@ -22,3 +22,4 @@ yarn-error.log*
 .history/
 build.pem
 build.crx
+build.zip
