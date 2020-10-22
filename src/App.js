@@ -5,7 +5,7 @@ import ShortcutWidget  from './Components/Shortcut.widget'
 import {Alert} from 'react-bootstrap';
 import './App.css';
 
-const VERSION = "0.0";
+const VERSION = "0.1";
 
 class App extends Component {
 
@@ -15,8 +15,6 @@ class App extends Component {
     this.state = {
         background: "",
         newVersion: false,
-        photographer_url: "",
-        photographer: ""
     };
 
     //We check if a new version is available

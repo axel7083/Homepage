@@ -1,3 +1,4 @@
+/*global chrome*/
 import ShortcutWidget  from './Components/Shortcut.widget'
 import TodoSection  from './Components/Todo.widget'
 import TextWidget  from './Components/Text.widget'
@@ -70,5 +71,35 @@ export const cachingImage = (urls,callback) =>
         }
         images[i].src = urls[i]
     }
+
+}
+
+export const exportAllData = (widgets,callback) =>
+{
+    let output = [];
+    let count = 0;
+    //First create an array of all the name of element which we need to take from the local storage.
+
+    let array = ["home","Gallery",];
+    widgets.forEach((item,i) => {
+        array.push(item.UUID);
+    })
+
+    array.forEach((item,i) => {
+        chrome.storage.local.get(item, function (res) {
+
+            count++;
+            if(!res[item])
+                return;
+
+            output.push(res);
+
+            if(count >= array.length)
+            {
+                callback(output);
+            }
+        });
+    })
+
 
 }

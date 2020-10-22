@@ -31,5 +31,10 @@
       },
       "description": "Open HomePage"
     }
+  },
+  "icons": {
+    "32": "./images/homepage-32.png",
+    "64": "./images/homepage-64.png",
+    "128": "./images/homepage-128.png"
   }
 }

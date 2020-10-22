@@ -60,3 +60,9 @@ this.setState({OnEditorChangeListener:(value) => {
         //Stuff to do when edit mode switch off
 }});
 ```
+
+## Liscence & more
+
+GNU AGPLv3 licensed.
+
+The icons of this extension has been made by [Freepik](https://www.flaticon.com/authors/freepik) from [Flaticon](https://www.flaticon.com/)

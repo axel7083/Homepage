@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, {Component} from "react";
 import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} from 'react-bootstrap';
-import {getComponentByID,randomIntFromInterval,cachingImage} from './../Utils';
+import {getComponentByID,randomIntFromInterval,cachingImage,exportAllData} from './../Utils';
 import Gallery  from './Gallery.component'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -24,7 +24,8 @@ export default class Home extends Component {
         this.onShowWallpaperModal = this.onShowWallpaperModal.bind(this);
         this.onHideWallpaperModal = this.onHideWallpaperModal.bind(this);
         this.reloadWallpaper = this.reloadWallpaper.bind(this);
-
+        this.onImport = this.onImport.bind(this);
+        this.onExport = this.onExport.bind(this);
 
         document.addEventListener('mousemove', this.mouseMove);
         document.addEventListener('mouseup', this.mouseup);
@@ -38,6 +39,7 @@ export default class Home extends Component {
             wallpaperModal:false,
             backgroundImage:"",
             spinning:false,
+            restoreModal:false,
         };
 
 
@@ -118,13 +120,19 @@ export default class Home extends Component {
 
     save(callback)
     {
-        if(this.state.editMode)
-            chrome.storage.local.set({ "home": this.state.widgets}, function(){
-                //  Data's been saved boys and girls, go on home
-                console.log(this.state.widgets);
-                console.log("Saved.");
-                callback();
-            }.bind(this));
+        this.setState({buffer:undefined}, () => {
+            if(this.state.editMode)
+                chrome.storage.local.set({ "home": this.state.widgets}, function(){
+                    //  Data's been saved boys and girls, go on home
+                    console.log(this.state.widgets);
+                    console.log("Saved.");
+                    callback();
+                }.bind(this));
+        })
+
+
+
+       // exportAllData(this.state.widgets);
     }
 
     onAdd()
@@ -195,6 +203,26 @@ export default class Home extends Component {
 
     }
 
+
+    onImport()
+    {
+        const data = JSON.parse(this.state.buffer);
+        data.forEach((item,i) => {
+            let key = Object.keys(item)[0];
+            console.log("Saving " + key + " ")
+            chrome.storage.local.set({ [key]: item[key]},() => {
+                console.log("Saved");
+            });
+        })
+    }
+
+    onExport()
+    {
+        exportAllData(this.state.widgets,(res) => {
+            this.setState({buffer:JSON.stringify(res)});
+        })
+    }
+
     render() {
 
 
@@ -212,7 +240,7 @@ export default class Home extends Component {
                 <Container className="tools">
                     <Row>
                         <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
-                        {/*<Col md="auto"><i className="fa fa-cog fa-2x"></i></Col>*/}
+                        <Col md="auto"><a href="#"><i className="fa fa-cog fa-2x" onClick={() => this.setState({restoreModal:true})}></i></a></Col>
                         <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
                         <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
@@ -268,6 +296,31 @@ export default class Home extends Component {
                             Close
                         </Button>
                         <Button variant="primary" onClick={() => this.reloadWallpaper(true)}>Save</Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Modal
+                    show={this.state.restoreModal}
+                    onHide={() => this.setState({restoreModal:false})}
+                    backdrop="static"
+                    size="lg"
+                    keyboard={false}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Exporting / Importing tool</Modal.Title>
+                    </Modal.Header>
+                    <Form>
+                        <Form.Group controlId="exampleForm.Data">
+                            <Form.Label>Data</Form.Label>
+                            <Form.Control as="textarea" rows={10} value={this.state.buffer} onChange={e => this.setState({ buffer: e.target.value })}/>
+                        </Form.Group>
+                        <Button variant="primary" onClick={this.onExport}>Export (Storage->Here)</Button>{' '}
+                        <Button variant="secondary" onClick={this.onImport}>Import (Here->Storage)</Button>{' '}
+                    </Form>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => this.setState({restoreModal:false})}>
+                            Close
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </Container>
