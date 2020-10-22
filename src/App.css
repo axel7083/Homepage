@@ -59,25 +59,15 @@
 
 .dragIcon {
     transform: rotate(45deg);
-    position: absolute;
     z-index: 99;
-    border-radius: 50%;
-    background: #000000;
-    padding: 10px;
     color: white;
-    left: -15px;
-    top: -15px;
+    padding: 10px;
 }
 
 .trashIcon {
-    position: absolute;
     z-index: 99;
-    border-radius: 50%;
-    background: #000000;
-    padding: 10px;
     color: white;
-    left: -15px;
-    bottom: -15px;
+    padding: 10px;
 }
 
 .tools {
@@ -86,6 +76,14 @@
     bottom: 0;
     width: fit-content;
     padding: 2rem;
+}
+
+.editMenu {
+    border-radius: 15px;
+    background: #950000;
+    width: inherit;
+    position: absolute;
+    left: -2.5rem;
 }
 
 .notification {

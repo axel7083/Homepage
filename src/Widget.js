@@ -32,7 +32,6 @@ export default class Widget extends Component {
 
     componentDidUpdate(prevProps,prevState) {
 
-
         if(prevProps.editor !== this.props.editor)
         {
             //console.log("editor state change to " + this.props.editor);

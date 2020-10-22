@@ -111,7 +111,6 @@ export default class ShortcutWidget extends Widget {
     render() {
 
         let add;
-        console.log("ReRender: " + JSON.stringify(this.state) );
         if(this.state.allowManualAdding)
         {
             add = <Col md="auto" >

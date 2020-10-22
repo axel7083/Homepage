@@ -204,7 +204,7 @@ export default class Home extends Component {
                     return <div key={i}
                                 className="movable"
                                 style={{top:item.top,left:item.left}}>
-                        {this.state.editMode?<div><i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/><i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/></div>:<></>}
+                        {this.state.editMode?<div className={"editMenu"} ><i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/><br/><i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/></div>:<></>}
                         { React.createElement(getComponentByID(item.componentID), {UUID:item.UUID, editor:this.state.editMode})}
                     </div>
                 })}
