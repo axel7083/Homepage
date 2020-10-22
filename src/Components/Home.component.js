@@ -138,7 +138,7 @@ export default class Home extends Component {
     onAdd()
     {
         console.log("Creating new component: " + this.state.newType);
-        this.state.widgets.push({UUID:uuidv4(),componentID:parseInt(this.state.newType),top:"0%",left:"0%"});
+        this.state.widgets.push({UUID:uuidv4(),componentID:parseInt(this.state.newType),top:"40%",left:"40%"});
 
         //this.forceUpdate();
         this.setState({widgets:this.state.widgets,show:false});
