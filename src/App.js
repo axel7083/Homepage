@@ -24,7 +24,7 @@ class App extends Component {
   componentDidMount() {
 
     //Checking version using is the last one.
-    fetch('https://api.github.com/repos/axel0070/LEDBack-cover/releases/latest', {
+    fetch('https://api.github.com/repos/axel0070/Homepage/releases/latest', {
       method: 'GET'
     })
         .then(function(response) { return response.json(); })
@@ -41,7 +41,7 @@ class App extends Component {
     return (
       <div className="App" onSelect={() => {return false}}>
          <Home/>
-        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="#">here</Alert.Link></Alert>:<></>}
+        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="https://github.com/axel0070/Homepage">here</Alert.Link></Alert>:<></>}
 
       </div>
     );
