@@ -1,6 +1,7 @@
 /*global chrome*/
 import ShortcutWidget  from './Components/Shortcut.widget'
 import TodoSection  from './Components/Todo.widget'
+import ClockWidget  from './Components/Clock.widget'
 import TextWidget  from './Components/Text.widget'
 
 export const toDataUrl = (url, callback) => {
@@ -44,6 +45,8 @@ export const getComponentByID = (id) => {
             return TodoSection;
         case 2:
             return TextWidget;
+        case 3:
+            return ClockWidget;
         default:
             return undefined;
     }

@@ -112,16 +112,16 @@ export default class Home extends Component {
         console.log("OnEdit:");
         console.log(this.state.widgets);
 
-        this.setState({editMode: !this.state.editMode})
-        this.forceUpdate();
+        this.setState({editMode: !this.state.editMode},() => {
+            this.save(() => {});
+        })
+        //this.forceUpdate();
 
-        this.save(() => {});
     }
 
     save(callback)
     {
         this.setState({buffer:undefined}, () => {
-            if(this.state.editMode)
                 chrome.storage.local.set({ "home": this.state.widgets}, function(){
                     //  Data's been saved boys and girls, go on home
                     console.log(this.state.widgets);
@@ -269,6 +269,7 @@ export default class Home extends Component {
                                     <option value={0}>Shortcut widget</option>
                                     <option value={1}>Todo List</option>
                                     <option value={2}>Text widget</option>
+                                    <option value={3}>Clock widget</option>
                                 </Form.Control>
                             </Form.Group>
                         </Form>
