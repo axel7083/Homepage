@@ -43,7 +43,7 @@ class App extends Component {
     return (
       <div className="App" onSelect={() => {return false}}>
           <Home/>
-        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="https://github.com/axel0070/Homepage">here</Alert.Link></Alert>:<></>}
+        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="https://chrome.google.com/webstore/detail/homepage/lldjhjmaljndmlnbomjcofanjalieahb">here</Alert.Link></Alert>:<></>}
 
       </div>
     );
