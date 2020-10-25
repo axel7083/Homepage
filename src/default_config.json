@@ -1,0 +1,57 @@
+[{
+  "home": [{
+    "UUID": "b584e9b7-795a-4fe9-878d-21a19f68100a",
+    "componentID": 3,
+    "left": "37%",
+    "top": "14%"
+  }, {
+    "UUID": "a20fa318-4010-40d0-97cd-2347c69ef150",
+    "componentID": 0,
+    "left": "7%",
+    "top": "33%"
+  }, {
+    "UUID": "9c4386c2-b1a7-4431-bfeb-b73aeef31317",
+    "componentID": 2,
+    "left": "6%",
+    "top": "28%"
+  }, {
+    "UUID": "1a240792-e69c-44fa-a2c8-9b0f0464d55e",
+    "componentID": 1,
+    "left": "7%",
+    "top": "47%"
+  }
+  ]
+}, {
+  "a20fa318-4010-40d0-97cd-2347c69ef150": {
+    "allowManualAdding": true,
+    "icon": "",
+    "shortcut": [{
+      "customName": "Instagram",
+      "src": "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png",
+      "url": "https://www.instagram.com/"
+    }, {
+      "customName": "Messenger",
+      "src": "https://www.freepnglogos.com/uploads/facebook-messenger-png/file-facebook-messenger-logo-svg-wikipedia-9.png",
+      "url": "https://www.messenger.com/"
+    }, {
+      "customName": "Twitter",
+      "src": "https://abs.twimg.com/responsive-web/client-web-legacy/icon-ios.8ea219d5.png",
+      "url": "https://twitter.com/home"
+    }
+    ],
+    "show": false
+  }
+}, {
+  "9c4386c2-b1a7-4431-bfeb-b73aeef31317": {
+    "color": "rgb(0,0,0)",
+    "editor": true,
+    "focus": false,
+    "value": "Favorite"
+  }
+}, {
+  "1a240792-e69c-44fa-a2c8-9b0f0464d55e": {
+    "text": "",
+    "todoList": ["Choose a wallpaper 📷", "Add some favorite ⭐"]
+  }
+}
+]

@@ -7,7 +7,7 @@ import './App.css';
 import './Clock.css';
 
 
-const VERSION = "0.1";
+const VERSION = "0.2";
 
 class App extends Component {
 

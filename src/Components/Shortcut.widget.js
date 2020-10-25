@@ -42,57 +42,60 @@ export default class ShortcutWidget extends Widget {
     handleAdd() {
         //console.log(this.state.url);
         //console.log(this.state.icon);
+        this.setState({disabled:true}, () => {
+            if(this.state.icon.length === 0)
+            {
+                fetch(favURL + this.state.url)
+                    .then((response) => {
+                        return response.json()
+                    })
+                    .then((data) => {
+                        if(data.icons === undefined)
+                        {
+                            this.state.shortcut.push({
+                                src: undefined,
+                                url: this.state.url
+                            });
+                        }
+                        else
+                        {
+                            this.state.shortcut.push({
+                                src: data.icons[0].url,
+                                url: this.state.url,
+                                customName: this.state.customName,
+                            });
+                        }
 
-        if(this.state.icon.length === 0)
-        {
-            fetch(favURL + this.state.url)
-                .then((response) => {
-                    return response.json()
-                })
-                .then((data) => {
-                    if(data.icons === undefined)
-                    {
-                        this.state.shortcut.push({
-                            src: undefined,
-                            url: this.state.url
+                        this.setState({show: false, shortcut: this.state.shortcut,icon:"",customName:"",url:"",disabled:false},() => {
+
+                            this.saveState(() => {
+                                console.log("State saved.");
+                            });
                         });
-                    }
-                    else
-                    {
-                        this.state.shortcut.push({
-                            src: data.icons[0].url,
-                            url: this.state.url,
-                            customName: this.state.customName,
-                        });
-                    }
-
-                    this.setState({show: false, shortcut: this.state.shortcut},() => {
-
-                        this.saveState(() => {
-                            console.log("State saved.");
-                        });
-                    });
-                    //console.log(data)
-                })
-                .catch((err) => {
-                    // Do something for an error here
-                })
-        }
-        else //User put his own icon
-        {
-            this.state.shortcut.push({
-                src: this.state.icon,
-                url: this.state.url,
-                customName: this.state.customName,
-            });
-            this.setState({show: false, shortcut: this.state.shortcut},() => {
-
-                this.saveState(() => {
-                    console.log("State saved.");
+                        //console.log(data)
+                    })
+                    .catch((err) => {
+                        // Do something for an error here
+                    })
+            }
+            else //User put his own icon
+            {
+                this.state.shortcut.push({
+                    src: this.state.icon,
+                    url: this.state.url,
+                    customName: this.state.customName,
                 });
+                this.setState({show: false, shortcut: this.state.shortcut,icon:"",customName:"",url:"",disabled:false},() => {
 
-            });
-        }
+                    this.saveState(() => {
+                        console.log("State saved.");
+                    });
+
+                });
+            }
+        })
+
+
     }
 
     handleRemove(index)
@@ -178,10 +181,10 @@ export default class ShortcutWidget extends Widget {
                         </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.handleClose}>
+                        <Button variant="secondary" onClick={this.handleClose} disabled={this.state.disabled}>
                             Cancel
                         </Button>
-                        <Button variant="primary" onClick={this.handleAdd}>Add</Button>
+                        <Button variant="primary" onClick={this.handleAdd} disabled={this.state.disabled}>Add</Button>
                     </Modal.Footer>
                 </Modal>
             </Container>

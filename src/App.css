@@ -78,6 +78,16 @@
     padding: 2rem;
 }
 
+.credit {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: fit-content;
+    padding: 2rem;
+    color: white;
+    font-weight: bold;
+}
+
 .editMenu {
     border-radius: 15px;
     background: #950000;

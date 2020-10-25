@@ -88,6 +88,8 @@ export const exportAllData = (widgets,callback) =>
         array.push(item.UUID);
     })
 
+    console.log(array);
+
     array.forEach((item,i) => {
         chrome.storage.local.get(item, function (res) {
 
@@ -97,8 +99,9 @@ export const exportAllData = (widgets,callback) =>
 
             output.push(res);
 
-            if(count >= array.length)
+            if(count >= array.length-1)
             {
+                console.log("Callback");
                 callback(output);
             }
         });

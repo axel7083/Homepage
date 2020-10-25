@@ -2,7 +2,7 @@
 
 ![homepage](https://github.com/axel0070/Homepage/blob/main/Screenshots/Example.png)
 
-A chrome extension which provide a nice customizable Homepage.
+A chrome extension which provide a nice customizable Homepage, you can download it from the chrome web store [here](https://chrome.google.com/webstore/detail/homepage/lldjhjmaljndmlnbomjcofanjalieahb)
 
 ## Widgets
  
@@ -25,6 +25,8 @@ The user can choose between themes available, and differents images will be disp
 Some future widgets I will implement:
 - Clock
 - Session saving (All the tabs open save them and restore them later)
+ 
+ 
  
 ## Creating widgets
 

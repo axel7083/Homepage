@@ -4,7 +4,7 @@ import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} f
 import {getComponentByID,randomIntFromInterval,cachingImage,exportAllData} from './../Utils';
 import Gallery  from './Gallery.component'
 import { v4 as uuidv4 } from 'uuid';
-
+import default_config from './../default_config.json';
 
 
 export default class Home extends Component {
@@ -26,6 +26,7 @@ export default class Home extends Component {
         this.reloadWallpaper = this.reloadWallpaper.bind(this);
         this.onImport = this.onImport.bind(this);
         this.onExport = this.onExport.bind(this);
+        this.firstLaunch = this.firstLaunch.bind(this);
 
         document.addEventListener('mousemove', this.mouseMove);
         document.addEventListener('mouseup', this.mouseup);
@@ -46,8 +47,10 @@ export default class Home extends Component {
         if(chrome.storage !== undefined) {
 
             chrome.storage.local.get("home", function (items) {
-                if(!items["home"])
+                if(!items["home"]) {
+                    this.firstLaunch();
                     return;
+                }
                 console.log("home: " + JSON.stringify(items));
                 this.setState({widgets:items.home})
                 this.reloadWallpaper(false);
@@ -57,6 +60,12 @@ export default class Home extends Component {
         {
             console.log("Debugging");
         }
+    }
+
+    firstLaunch()
+    {
+        console.log("First launch");
+        this.onImport(default_config);
     }
 
     mouseMove(e) {
@@ -191,10 +200,20 @@ export default class Home extends Component {
 
                 if(needCaching)
                     cachingImage(urls,(index) => {
-                        this.setState({backgroundImage:"url("+selected.photos[index].src.original+")",spinning:false})
+                        this.setState({
+                            backgroundImage:"url("+selected.photos[index].src.original+")",
+                            spinning:false,
+                            credit:{photographer:selected.photos[index].photographer,photographer_url:selected.photos[index].photographer_url}
+                        });
                     })
-                else
-                    this.setState({backgroundImage:"url("+selected.photos[randomIntFromInterval(0,urls.length-1)].src.original+")",spinning:false})
+                else {
+                    let index = randomIntFromInterval(0, urls.length - 1);
+                    this.setState({
+                        backgroundImage:"url("+selected.photos[index].src.original+")",
+                        spinning:false,
+                        credit:{photographer:selected.photos[index].photographer,photographer_url:selected.photos[index].photographer_url}
+                    });
+                }
 
 
             }.bind(this));
@@ -204,21 +223,33 @@ export default class Home extends Component {
     }
 
 
-    onImport()
+    onImport(data = undefined)
     {
-        const data = JSON.parse(this.state.buffer);
+        if(data === undefined)
+            data = JSON.parse(this.state.buffer);
+
+        let count = 0;
         data.forEach((item,i) => {
             let key = Object.keys(item)[0];
             console.log("Saving " + key + " ")
             chrome.storage.local.set({ [key]: item[key]},() => {
                 console.log("Saved");
+                count++;
+
+                if(count === data.length - 1)
+                {
+                    console.log("Reloading..");
+                    window.location.reload();
+                }
             });
         })
     }
 
     onExport()
     {
+        console.log("On Export");
         exportAllData(this.state.widgets,(res) => {
+            console.log("Exporting..");
             this.setState({buffer:JSON.stringify(res)});
         })
     }
@@ -236,12 +267,15 @@ export default class Home extends Component {
                         { React.createElement(getComponentByID(item.componentID), {UUID:item.UUID, editor:this.state.editMode})}
                     </div>
                 })}
+                {this.state.credit?<Container className="credit">
+                    <span>This Photo was taken by <a target="_blank" href={this.state.credit.photographer_url}>{this.state.credit.photographer}</a> on Pexels.</span>
+                </Container>:<></>}
 
                 <Container className="tools">
                     <Row>
                         <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
-                        <Col md="auto"><a href="#"><i className="fa fa-cog fa-2x"
-                                                       onClick={() => this.setState({restoreModal: true})}></i></a></Col>
+                        {/*<Col md="auto"><a href="#"><i className="fa fa-cog fa-2x"
+                                                       onClick={() => this.setState({restoreModal: true})}></i></a></Col>*/}
                         <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
                         <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
@@ -317,7 +351,7 @@ export default class Home extends Component {
                             <Form.Control as="textarea" rows={10} value={this.state.buffer} onChange={e => this.setState({ buffer: e.target.value })}/>
                         </Form.Group>
                         <Button variant="primary" onClick={this.onExport}>Export (Storage->Here)</Button>{' '}
-                        <Button variant="secondary" onClick={this.onImport}>Import (Here->Storage)</Button>{' '}
+                        <Button variant="secondary" onClick={() => this.onImport()}>Import (Here->Storage)</Button>{' '}
                     </Form>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({restoreModal:false})}>
