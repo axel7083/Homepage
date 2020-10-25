@@ -23,10 +23,17 @@ The user can choose between themes available, and differents images will be disp
 ## Todo
  
 Some future widgets I will implement:
-- Clock
 - Session saving (All the tabs open save them and restore them later)
+- History widget (few last website visited)
+- Most used website
+- Search engine (Having a google widget maybe ?)
+- Music player (Spotify ? Youtube ?)
  
- 
+Features
+- Make widgets resizable by the user
+- Fixing the z-index way the widgets are displaying
+- Make the images loading in the background script to avoid endless loading
+- Custom background from url
  
 ## Creating widgets
 
