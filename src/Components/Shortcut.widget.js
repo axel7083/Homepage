@@ -4,7 +4,8 @@ import Widget from "../Widget";
 
 import { Card , Row, Container ,Col ,Image, Modal, Button,Form} from 'react-bootstrap';
 import {extractHostname} from './../Utils';
-const favURL = "https://besticon-demo.herokuapp.com/allicons.json?url="
+//const favURL = "https://besticon-demo.herokuapp.com/allicons.json?url=" //Down ???
+const favURL = "https://i.olsh.me/icon?size=80..120..200&url="
 
 export default class ShortcutWidget extends Widget {
 
@@ -45,7 +46,7 @@ export default class ShortcutWidget extends Widget {
         this.setState({disabled:true}, () => {
             if(this.state.icon.length === 0)
             {
-                fetch(favURL + this.state.url)
+                /*fetch(favURL + this.state.url)
                     .then((response) => {
                         return response.json()
                     })
@@ -54,7 +55,8 @@ export default class ShortcutWidget extends Widget {
                         {
                             this.state.shortcut.push({
                                 src: undefined,
-                                url: this.state.url
+                                url: this.state.url,
+                                customName: this.state.customName
                             });
                         }
                         else
@@ -76,7 +78,18 @@ export default class ShortcutWidget extends Widget {
                     })
                     .catch((err) => {
                         // Do something for an error here
-                    })
+                    })*/
+                this.state.shortcut.push({
+                    src: favURL + this.state.url,
+                    url: this.state.url,
+                    customName: this.state.customName,
+                });
+
+                this.setState({show: false, shortcut: this.state.shortcut,icon:"",customName:"",url:"",disabled:false},() => {
+                    this.saveState(() => {
+                        console.log("State saved.");
+                    });
+                });
             }
             else //User put his own icon
             {
@@ -128,7 +141,6 @@ export default class ShortcutWidget extends Widget {
         }
         return (
             <Container className="section">
-                <h3 style={{color:"black"}}>{this.state.name}</h3>
                 <Row style={{textAlign: "center", fontSize:"x-small"}}>
                     {this.state.shortcut?this.state.shortcut.map((item,i) => {
                         return <Col md="auto" key={i} >

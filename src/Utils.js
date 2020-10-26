@@ -77,6 +77,18 @@ export const cachingImage = (urls,callback) =>
 
 }
 
+export const convertRemToWidthPercentage = (rem) => {
+    const width = window.innerWidth;
+    const pixel = rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    return (pixel/width)*100;
+}
+
+export const RemToPixel = (rem) =>
+{
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
 export const exportAllData = (widgets,callback) =>
 {
     let output = [];
@@ -106,6 +118,4 @@ export const exportAllData = (widgets,callback) =>
             }
         });
     })
-
-
 }

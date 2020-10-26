@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, {Component} from "react";
 import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} from 'react-bootstrap';
-import {getComponentByID,randomIntFromInterval,cachingImage,exportAllData} from './../Utils';
+import {getComponentByID,randomIntFromInterval,cachingImage,exportAllData,convertRemToWidthPercentage,RemToPixel} from './../Utils';
 import Gallery  from './Gallery.component'
 import { v4 as uuidv4 } from 'uuid';
 import default_config from './../default_config.json';
@@ -35,6 +35,7 @@ export default class Home extends Component {
             editMode: false,
             mouseDown: false,
             selected: -1,
+            resizeSelected: false,
             widgets: [],
             newType:0,
             wallpaperModal:false,
@@ -81,15 +82,31 @@ export default class Home extends Component {
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        widget.top = Math.floor((newMouseY/height)*100)+"%";
-        widget.left =  Math.floor((newMouseX/width)*100)+"%";
+        if(!this.state.resizeSelected) //Simply moving
+        {
+            console.log("Moving...");
+            widget.top = Math.floor((newMouseY/height)*100)+"%";
+            widget.left =  Math.floor((newMouseX/width)*100 + convertRemToWidthPercentage(2.5))+"%";
+        }
+        else //We are resizing
+        {
+            console.log("Resizing... width:" + width + " height:" + height);
+            let xOffset = (parseInt(widget.left.substring(0,widget.left.length-1))*width)/100;
+            let yOffset = (parseInt(widget.top.substring(0,widget.top.length-1))*height)/100;
+            console.log("xOffset:" + xOffset);
+            console.log("yOffset:" + yOffset);
+            widget.width = (newMouseX-xOffset-RemToPixel(2))+ "px";
+            widget.height =  (newMouseY-yOffset-RemToPixel(2))+ "px";
+            console.log(widget);
+        }
 
         this.state.widgets[this.state.selected] = widget;
         this.setState({widgets:this.state.widgets});
+
     }
 
     mouseup() {
-        this.setState({selected: -1});
+        this.setState({selected: -1,resizeSelected:false});
     }
 
 
@@ -147,7 +164,7 @@ export default class Home extends Component {
     onAdd()
     {
         console.log("Creating new component: " + this.state.newType);
-        this.state.widgets.push({UUID:uuidv4(),componentID:parseInt(this.state.newType),top:"40%",left:"40%"});
+        this.state.widgets.push({UUID:uuidv4(),componentID:parseInt(this.state.newType),top:"40%",left:"40%",width:"fit-content",height:"fit-content"});
 
         //this.forceUpdate();
         this.setState({widgets:this.state.widgets,show:false});
@@ -262,9 +279,22 @@ export default class Home extends Component {
                 {this.state.widgets?.map((item,i) => {
                     return <div key={i}
                                 className="movable"
-                                style={{top:item.top,left:item.left}}>
-                        {this.state.editMode?<div className={"editMenu"} ><i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/><br/><i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/></div>:<></>}
-                        { React.createElement(getComponentByID(item.componentID), {UUID:item.UUID, editor:this.state.editMode})}
+                                id={item.UUID}
+                                style={{top:item.top,left:item.left,width:item.width,height:item.height}}>
+                        {this.state.editMode?
+                            <div>
+                                <div className={"editMenu"} >
+                                    <i className="fa fa-arrows-alt dragIcon" onMouseDown={() => this.selected(i)}/>
+                                    <br/>
+                                    <i className="fa fa-trash trashIcon" onClick={() => this.onDelete(i)}/>
+                                </div>
+                                {/*<div className="rg-bottom" style={{transform: " rotate(135deg)"}}>
+                                    <i className="fa fa-chevron-up fa-2x"
+                                       onMouseDown={() => this.setState({resizeSelected: "true", selected: i})}></i>
+                                </div>*/}
+                            </div>:<></>
+                        }
+                        {React.createElement(getComponentByID(item.componentID), {UUID:item.UUID, editor:this.state.editMode})}
                     </div>
                 })}
                 {this.state.credit?<Container className="credit">

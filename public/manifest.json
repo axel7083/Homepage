@@ -1,6 +1,6 @@
 {
   "name": "Homepage",
-  "version": "0.2",
+  "version": "0.2.1",
   "manifest_version": 2,
   "background": {
     "scripts": [
@@ -17,7 +17,7 @@
   ],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'",
   "permissions": [
-    "https://besticon-demo.herokuapp.com/*",
+    "https://i.olsh.me/*",
     "https://api.github.com/*",
     "storage",
     "history",
