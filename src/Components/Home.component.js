@@ -6,7 +6,7 @@ import Gallery  from './Gallery.component'
 import { v4 as uuidv4 } from 'uuid';
 import default_config from './../default_config.json';
 
-const isDebug = true;
+const isDebug = false;
 
 export default class Home extends Component {
 
