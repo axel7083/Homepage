@@ -335,6 +335,7 @@ export default class Home extends Component {
                                     <option value={1}>Todo List</option>
                                     <option value={2}>Text widget</option>
                                     <option value={3}>Clock widget</option>
+                                    <option value={4}>History</option>
                                 </Form.Control>
                             </Form.Group>
                         </Form>

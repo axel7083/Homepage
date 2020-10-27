@@ -3,6 +3,7 @@ import ShortcutWidget  from './Components/Shortcut.widget'
 import TodoSection  from './Components/Todo.widget'
 import ClockWidget  from './Components/Clock.widget'
 import TextWidget  from './Components/Text.widget'
+import HistoryWidget  from './Components/History.widget'
 
 export const toDataUrl = (url, callback) => {
     var xhr = new XMLHttpRequest();
@@ -47,6 +48,8 @@ export const getComponentByID = (id) => {
             return TextWidget;
         case 3:
             return ClockWidget;
+        case 4:
+            return HistoryWidget;
         default:
             return undefined;
     }

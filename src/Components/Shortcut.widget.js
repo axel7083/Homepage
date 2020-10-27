@@ -16,9 +16,12 @@ export default class ShortcutWidget extends Widget {
         this.handleClose = this.handleClose.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
-
         this.state = {};
 
+
+    }
+
+    componentDidMount() {
         this.loadState((isEmpty) => {
             if(isEmpty)
             {

@@ -23,7 +23,7 @@ export default class TodoWidget extends Widget {
                 this.setState({value:"Title",color:"#FFF",focus:false});
             }
 
-            this.setState({editor:false, OnEditorChangeListener:(value) => {
+            this.setState({editor:this.props.editor, OnEditorChangeListener:(value) => {
                     this.setState({editor:value});
 
                     if(!value)
