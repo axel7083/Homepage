@@ -6,6 +6,7 @@ import Gallery  from './Gallery.component'
 import { v4 as uuidv4 } from 'uuid';
 import default_config from './../default_config.json';
 
+const isDebug = true;
 
 export default class Home extends Component {
 
@@ -304,8 +305,8 @@ export default class Home extends Component {
                 <Container className="tools">
                     <Row>
                         <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
-                        {/*<Col md="auto"><a href="#"><i className="fa fa-cog fa-2x"
-                                                       onClick={() => this.setState({restoreModal: true})}></i></a></Col>*/}
+                        {isDebug?<Col md="auto"><a href="#"><i className="fa fa-cog fa-2x"
+                                                       onClick={() => this.setState({restoreModal: true})}></i></a></Col>:<></>}
                         <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
                         <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
                     </Row>
