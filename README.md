@@ -1,4 +1,7 @@
-# HomePage
+# HomePage 
+<a href="https://chrome.google.com/webstore/detail/homepage/lldjhjmaljndmlnbomjcofanjalieahb"> 
+<img alt="Chrome extension" src="https://img.shields.io/chrome-web-store/v/lldjhjmaljndmlnbomjcofanjalieahb">
+</a>
 
 ![homepage](https://github.com/axel0070/Homepage/blob/main/Screenshots/Example.png)
 
