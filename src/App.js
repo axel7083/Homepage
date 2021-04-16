@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home  from './Components/Home.component'
-import Clock  from './Components/Clock.widget'
 import {Alert} from 'react-bootstrap';
 import './App.css';
 import './Clock.css';
-
+import Gallery2Component from "./Components/Gallery2.component";
 
 const VERSION = "0.2.2";
 
@@ -42,10 +41,8 @@ class App extends Component {
   render() {
     return (
       <div className="App" onSelect={() => {return false}}>
-          <Home/>
-        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="https://chrome.google.com/webstore/detail/homepage/lldjhjmaljndmlnbomjcofanjalieahb">here</Alert.Link></Alert>:<></>}
-
-      </div>
+          {<Home/>}
+        {this.state.newVersion?<Alert className="notification" variant="warning">A new version is available, update it <Alert.Link href="https://chrome.google.com/webstore/detail/homepage/lldjhjmaljndmlnbomjcofanjalieahb">here</Alert.Link></Alert>:<></>}      </div>
     );
   }
 }

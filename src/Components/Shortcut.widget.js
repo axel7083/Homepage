@@ -5,7 +5,7 @@ import Widget from "../Widget";
 import { Card , Row, Container ,Col ,Image, Modal, Button,Form} from 'react-bootstrap';
 import {extractHostname} from './../Utils';
 //const favURL = "https://besticon-demo.herokuapp.com/allicons.json?url=" //Down ???
-const favURL = "https://i.olsh.me/icon?size=80..120..200&url="
+const favURL = "chrome://favicon/size/64@1x/"
 
 export default class ShortcutWidget extends Widget {
 

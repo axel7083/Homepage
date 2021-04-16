@@ -2,7 +2,7 @@
 import React from "react";
 import ShortcutWidget from "./Shortcut.widget";
 
-const favURL = "https://i.olsh.me/icon?size=80..120..200&url="
+const favURL = "chrome://favicon/size/64@1x/"
 
 export default class History extends ShortcutWidget {
 

@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import {Card, Row, Container, Col, Image, Modal, Button, Form, Table, Spinner} from 'react-bootstrap';
 import {getComponentByID,randomIntFromInterval,cachingImage,exportAllData,convertRemToWidthPercentage,RemToPixel} from './../Utils';
 import Gallery  from './Gallery.component'
+import Gallery2  from './Gallery2.component'
 import { v4 as uuidv4 } from 'uuid';
 import default_config from './../default_config.json';
 
@@ -28,6 +29,7 @@ export default class Home extends Component {
         this.onImport = this.onImport.bind(this);
         this.onExport = this.onExport.bind(this);
         this.firstLaunch = this.firstLaunch.bind(this);
+        this.computeDimension = this.computeDimension.bind(this);
 
         document.addEventListener('mousemove', this.mouseMove);
         document.addEventListener('mouseup', this.mouseup);
@@ -272,6 +274,12 @@ export default class Home extends Component {
         })
     }
 
+    computeDimension(max, position) {
+        //console.log("[computeDimension]");
+        let val = parseInt(position.substring(0,position.length-1))/100;
+        return max - max*val;
+    }
+
     render() {
 
 
@@ -281,7 +289,14 @@ export default class Home extends Component {
                     return <div key={i}
                                 className="movable"
                                 id={item.UUID}
-                                style={{top:item.top,left:item.left,width:item.width,height:item.height}}>
+                                style={
+                                    {top:item.top,
+                                        left:item.left,
+                                        width:item.width,
+                                        height:item.height,
+                                        maxWidth: this.computeDimension(window.innerWidth, item.left) + "px",
+                                        maxHeight: this.computeDimension(window.innerHeight, item.top) + "px"
+                                    }}>
                         {this.state.editMode?
                             <div>
                                 <div className={"editMenu"} >
@@ -304,11 +319,12 @@ export default class Home extends Component {
 
                 <Container className="tools">
                     <Row>
-                        <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}></i></a></Col>
+                        <Col md="auto"><a href="#"><i className="fa fa-paint-brush fa-2x" onClick={this.onEdit}/></a></Col>
                         {isDebug?<Col md="auto"><a href="#"><i className="fa fa-cog fa-2x"
-                                                       onClick={() => this.setState({restoreModal: true})}></i></a></Col>:<></>}
-                        <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}></i></a></Col>
-                        <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}></i></a></Col>
+    onClick={() => this.setState({restoreModal: true})}/></a></Col>
+                            :<></>}
+                            <Col md="auto"><a href="#"><i className="fa fa-plus fa-2x" onClick={this.handleShow}/></a></Col>
+                        <Col md="auto"><a href="#"><i className="fa fa-image fa-2x" onClick={this.onShowWallpaperModal}/></a></Col>
                     </Row>
                 </Container>
 
@@ -358,7 +374,7 @@ export default class Home extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Pexels gallery</Modal.Title>
                     </Modal.Header>
-                    <Gallery/>
+                    {isDebug?<Gallery2/>:<Gallery/>}
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({wallpaperModal:false})}>
                             Close
@@ -367,13 +383,7 @@ export default class Home extends Component {
                     </Modal.Footer>
                 </Modal>
 
-                <Modal
-                    show={this.state.restoreModal}
-                    onHide={() => this.setState({restoreModal:false})}
-                    backdrop="static"
-                    size="lg"
-                    keyboard={false}
-                >
+                {isDebug?<Modal show={this.state.restoreModal} onHide={() => this.setState({restoreModal:false})} backdrop="static" size="lg" keyboard={false}>
                     <Modal.Header closeButton>
                         <Modal.Title>Exporting / Importing tool</Modal.Title>
                     </Modal.Header>
@@ -390,7 +400,8 @@ export default class Home extends Component {
                             Close
                         </Button>
                     </Modal.Footer>
-                </Modal>
+                </Modal>:<></>}
+
             </Container>
         );
     }
